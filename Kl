@@ -1,0 +1,73 @@
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
+const videos = [
+  {
+    title: "Aventuras no Espaço",
+    description: "Um filme de ficção científica de domínio público.",
+    thumbnail: "https://via.placeholder.com/300x150.png?text=Aventuras+no+Espa%C3%A7o",
+    url: "https://archive.org/download/Popeye_forPresident/Popeye_forPresident_512kb.mp4"
+  },
+  {
+    title: "Viagem ao Centro da Terra",
+    description: "Clássico de aventura para toda a família.",
+    thumbnail: "https://via.placeholder.com/300x150.png?text=Viagem+ao+Centro+da+Terra",
+    url: "https://archive.org/download/TheKid1921/TheKid1921_512kb.mp4"
+  }
+];
+
+export default function App() {
+  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [email, setEmail] = useState("");
+
+  const handleLogin = () => {
+    if (email.includes("@")) setIsLoggedIn(true);
+  };
+
+  if (!isLoggedIn) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-900 text-white">
+        <h1 className="text-3xl font-bold mb-4">Minha Streaming</h1>
+        <Input
+          type="email"
+          placeholder="Digite seu e-mail"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="mb-2 w-64"
+        />
+        <Button onClick={handleLogin}>Entrar</Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-black text-white p-4">
+      <h1 className="text-4xl font-bold mb-6 text-center">Minha Streaming</h1>
+      {selectedVideo ? (
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold mb-2">{selectedVideo.title}</h2>
+          <video controls className="w-full max-w-4xl mx-auto">
+            <source src={selectedVideo.url} type="video/mp4" />
+            Seu navegador não suporta vídeo.
+          </video>
+          <Button onClick={() => setSelectedVideo(null)} className="mt-4">Voltar</Button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {videos.map((video, index) => (
+            <Card key={index} onClick={() => setSelectedVideo(video)} className="cursor-pointer hover:shadow-xl transition-shadow">
+              <img src={video.thumbnail} alt={video.title} className="rounded-t-lg" />
+              <CardContent className="p-4">
+                <h3 className="text-xl font-semibold">{video.title}</h3>
+                <p className="text-sm text-gray-300">{video.description}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
